@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container mt-5">
+  <h2 class="mb-4"><i class="bi bi-gear"></i> Account Settings</h2>
+
+  <!-- User Info -->
+  <div class="card mb-4">
+    <div class="card-header">
+      <i class="bi bi-person-circle"></i> Profile
+    </div>
+    <div class="card-body">
+      <p><strong>Email:</strong> {{ current_user.email }}</p>
+      <p><strong>Account Created:</strong> {{ current_user.created_at.strftime('%Y-%m-%d') }}</p>
+    </div>
+  </div>
+
+  <!-- Two-Factor Authentication -->
+  <div class="card mb-4">
+    <div class="card-header">
+      <i class="bi bi-shield-lock"></i> Security
+    </div>
+    <div class="card-body">
+      {% if current_user.two_factor_enabled %}
+        <p class="text-success"><i class="bi bi-check-circle"></i> Two-Factor Authentication is <strong>enabled</strong>.</p>
+        <a href="{{ url_for('main.disable_2fa') }}" class="btn btn-danger">
+          <i class="bi bi-x-circle"></i> Disable 2FA
+        </a>
+      {% else %}
+        <p class="text-muted">Two-Factor Authentication adds an extra layer of security to your account.</p>
+        <a href="{{ url_for('main.setup_2fa') }}" class="btn btn-primary">
+          <i class="bi bi-shield-plus"></i> Enable 2FA
+        </a>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}

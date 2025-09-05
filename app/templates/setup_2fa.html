@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container text-center mt-5">
+  <h2>Set up Two-Factor Authentication</h2>
+  <p>Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.).</p>
+
+  <!-- QR Code -->
+  <img src="data:image/png;base64,{{ qr_code }}" class="img-fluid mb-3" alt="QR Code">
+
+  <p class="text-muted">Or enter this secret manually: <code>{{ secret }}</code></p>
+
+  <form method="POST" class="mt-4">
+    <div class="mb-3">
+      <input type="text" name="code" class="form-control form-control-lg text-center" 
+             maxlength="6" placeholder="Enter 6-digit code" required>
+    </div>
+    <button type="submit" class="btn btn-primary btn-lg">Enable 2FA</button>
+  </form>
+</div>
+{% endblock %}

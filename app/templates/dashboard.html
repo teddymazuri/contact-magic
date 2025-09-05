@@ -1,0 +1,232 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="row mb-4">
+  <!-- Total Contacts -->
+  <div class="col-md-3">
+    <div class="card text-center shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">{{ stats.total_contacts }}</h5>
+        <p class="card-text text-muted">Total Contacts</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- New This Month -->
+  <div class="col-md-3">
+    <div class="card text-center shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">{{ stats.month_contacts }}</h5>
+        <p class="card-text text-muted">Added This Month</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- With Email -->
+  <div class="col-md-3">
+    <div class="card text-center shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">{{ stats.email_contacts }}</h5>
+        <p class="card-text text-muted">With Email</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- With Social -->
+  <div class="col-md-3">
+    <div class="card text-center shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">{{ stats.social_contacts }}</h5>
+        <p class="card-text text-muted">With Social Link</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Latest Contact -->
+{% if stats.latest_contact %}
+<div class="alert alert-info">
+  <strong>Latest:</strong> {{ stats.latest_contact.name }} added on 
+  {{ stats.latest_contact.created_at.strftime("%b %d, %Y") }}
+</div>
+{% endif %}
+
+  <!-- Add Contact Card -->
+  <div class="col-md-8">
+    <div class="card">
+      <div class="card-header">
+        <i class="bi bi-person-plus"></i> Add New Contact
+      </div>
+      <div class="card-body">
+        <form method="POST">
+          {{ form.hidden_tag() }}
+          <div class="row mb-3">
+            <div class="col-md-6">
+              {{ form.name.label }} {{ form.name(class="form-control") }}
+            </div>
+            <div class="col-md-6">
+              {{ form.phone.label }} {{ form.phone(class="form-control") }}
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-6">
+              {{ form.email.label }} {{ form.email(class="form-control") }}
+            </div>
+            <div class="col-md-6">
+              {{ form.social.label }} {{ form.social(class="form-control") }}
+            </div>
+          </div>
+          <div class="d-grid">
+            {{ form.submit(class="btn btn-primary") }}
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Search, Export, and Import Toolbar -->
+<div class="d-flex justify-content-between align-items-center mt-4 mb-3 px-3">
+  <!-- Search Form -->
+  <form method="GET" action="{{ url_for('main.dashboard') }}" class="d-flex">
+    <input type="text" name="search" value="{{ search_query }}" 
+           class="form-control me-2" 
+           placeholder="Search by name, phone, or email">
+    <button type="submit" class="btn btn-primary me-2">
+      <i class="bi bi-search"></i> Search
+    </button>
+    {% if search_query %}
+      <a href="{{ url_for('main.dashboard') }}" class="btn btn-secondary">
+        <i class="bi bi-x-circle"></i> Clear
+      </a>
+    {% endif %}
+  </form>
+
+  <!-- Export & Import -->
+  <div>
+    <a href="{{ url_for('main.download_csv') }}" class="btn btn-outline-success me-2">
+      <i class="bi bi-file-earmark-spreadsheet"></i> CSV
+    </a>
+    <a href="{{ url_for('main.download_excel') }}" class="btn btn-outline-info me-2">
+      <i class="bi bi-file-earmark-excel"></i> Excel
+    </a>
+    <!-- Import button (opens modal) -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#importModal">
+      <i class="bi bi-upload"></i> Import
+    </button>
+  </div>
+</div>
+
+<!-- Import Modal -->
+<div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="POST" action="{{ url_for('main.import_contacts') }}" enctype="multipart/form-data">
+        <div class="modal-header">
+          <h5 class="modal-title" id="importModalLabel">Import Contacts</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Upload a <strong>CSV</strong> or <strong>XLSX</strong> file with columns:</p>
+          <ul>
+            <li><code>Name</code></li>
+            <li><code>Phone</code></li>
+            <li><code>Email</code></li>
+            <li><code>Social</code></li>
+            <li><code>Created At</code></li>
+          </ul>
+          <div class="mb-3">
+            <input type="file" class="form-control" name="file" accept=".csv,.xlsx" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Import</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<!-- Contact List -->
+<div class="card mx-3">
+  <div class="card-header">
+    <i class="bi bi-journal-text"></i> Your Contacts
+  </div>
+  <div class="card-body p-0">
+    <table class="table table-hover mb-0">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Phone</th>
+          <th>Email</th>
+          <th>Social</th>
+          <th style="width: 150px;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in contacts.items %}
+        <tr>
+          <td>{{ c.name }}</td>
+          <td>{{ c.phone }}</td>
+          <td>{{ c.email }}</td>
+          <td>{{ c.social }}</td>
+          <td>
+            <a href="{{ url_for('main.edit_contact', id=c.id) }}" 
+               class="btn btn-sm btn-warning">
+              <i class="bi bi-pencil"></i>
+            </a>
+            <form method="POST" 
+                  action="{{ url_for('main.delete_contact', id=c.id) }}" 
+                  style="display:inline;">
+              <button type="submit" class="btn btn-sm btn-danger"
+                      onclick="return confirm('Delete this contact?');">
+                <i class="bi bi-trash"></i>
+              </button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="5" class="text-center text-muted">No contacts found.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Pagination -->
+<nav aria-label="Contact pagination" class="mt-3">
+  <ul class="pagination justify-content-center">
+    {% if contacts.has_prev %}
+      <li class="page-item">
+        <a class="page-link" href="{{ url_for('main.dashboard', page=contacts.prev_num, search=search_query) }}">Previous</a>
+      </li>
+    {% else %}
+      <li class="page-item disabled"><span class="page-link">Previous</span></li>
+    {% endif %}
+
+    {% for page_num in contacts.iter_pages() %}
+      {% if page_num %}
+        {% if page_num == contacts.page %}
+          <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
+        {% else %}
+          <li class="page-item"><a class="page-link" href="{{ url_for('main.dashboard', page=page_num, search=search_query) }}">{{ page_num }}</a></li>
+        {% endif %}
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">…</span></li>
+      {% endif %}
+    {% endfor %}
+
+    {% if contacts.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="{{ url_for('main.dashboard', page=contacts.next_num, search=search_query) }}">Next</a>
+      </li>
+    {% else %}
+      <li class="page-item disabled"><span class="page-link">Next</span></li>
+    {% endif %}
+  </ul>
+</nav>
+
+
+{% endblock %}
