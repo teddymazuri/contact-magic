@@ -37,3 +37,39 @@ A contact management web application built with Flask that helps users securely 
 2. A starter template for building CRM (Customer Relationship Management) systems.
 
 3. A learning project for Flask authentication, 2FA, and CRUD operations.
+
+
+------------------------
+⚙️ Installation & Setup
+------------------------
+
+Follow these steps to set up the project locally:
+
+1️⃣ Clone the Repository
+-----------------------
+git clone https://github.com/teddymazuri/contact-magic.git
+cd contact-magic
+
+2️⃣ Create & Activate a Virtual Environment
+------------------------------------------
+python3 -m venv venv
+source venv/bin/activate   # On Linux/Mac
+venv\Scripts\activate      # On Windows
+
+3️⃣ Install Dependencies
+-----------------------
+pip install -r requirements.txt
+
+4️⃣ Set Up the Database
+----------------------
+flask db init
+flask db migrate -m "Initial migration"
+flask db upgrade
+
+5️⃣ Run the Application
+----------------------
+flask run
+
+
+By default, the app will be available at 👉 http://127.0.0.1:5000/
+
