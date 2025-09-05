@@ -48,12 +48,15 @@ Follow these steps to set up the project locally:
 1️⃣ Clone the Repository
 -----------------------
 git clone https://github.com/teddymazuri/contact-magic.git
+
 cd contact-magic
 
 2️⃣ Create & Activate a Virtual Environment
 ------------------------------------------
 python3 -m venv venv
+
 source venv/bin/activate   # On Linux/Mac
+
 venv\Scripts\activate      # On Windows
 
 3️⃣ Install Dependencies
@@ -63,7 +66,9 @@ pip install -r requirements.txt
 4️⃣ Set Up the Database
 ----------------------
 flask db init
+
 flask db migrate -m "Initial migration"
+
 flask db upgrade
 
 5️⃣ Run the Application
