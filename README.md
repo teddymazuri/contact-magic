@@ -78,3 +78,12 @@ flask run
 
 By default, the app will be available at 👉 http://127.0.0.1:5000/
 
+
+🔑 Default Configuration
+-------------------------
+
+1. The app uses SQLite by default (stored inside instance/).
+
+2. You can customize configs (like database path or secret key) in config.py or environment variables.
+
+3. For 2FA, the app uses PyOTP (Google Authenticator compatible).
