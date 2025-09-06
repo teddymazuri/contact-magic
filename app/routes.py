@@ -90,7 +90,7 @@ def register():
     form = RegistrationForm()
     if form.validate_on_submit():
         new_user = User(email=form.email.data)
-        new_user.set_password(form.password.data)   # use helper
+        new_user.set_password(form.password.data)  
         db.session.add(new_user)
         db.session.commit()
         flash('Account created successfully! You can now log in.', 'success')
@@ -155,7 +155,7 @@ def dashboard():
             email=form.email.data,
             social=form.social.data,
             user_id=current_user.id,
-            created_at=datetime.utcnow()  # make sure your model has this field
+            created_at=datetime.utcnow()  
         )
         db.session.add(new_contact)
         db.session.commit()
